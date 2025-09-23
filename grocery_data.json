@@ -1,0 +1,94 @@
+{
+  "products": [
+    { "id": 1, "name": "Chal (Miniket)", "category": "Grains", "price": 65, "stock": 200, "tags": ["essential", "bulk"] },
+    { "id": 2, "name": "Chal (Nazirshail)", "category": "Grains", "price": 70, "stock": 180, "tags": ["premium", "bulk"] },
+    { "id": 3, "name": "Atta (Ghum)", "category": "Grains", "price": 45, "stock": 150, "tags": ["essential"] },
+    { "id": 4, "name": "Moida", "category": "Grains", "price": 50, "stock": 160, "tags": ["baking"] },
+    { "id": 5, "name": "Suji", "category": "Grains", "price": 55, "stock": 100, "tags": ["breakfast"] },
+    { "id": 6, "name": "Masoor Dal", "category": "Pulses", "price": 120, "stock": 140, "tags": ["protein"] },
+    { "id": 7, "name": "Mug Dal", "category": "Pulses", "price": 130, "stock": 120, "tags": ["protein"] },
+    { "id": 8, "name": "Cholar Dal", "category": "Pulses", "price": 110, "stock": 110, "tags": ["protein"] },
+    { "id": 9, "name": "Motor Dal", "category": "Pulses", "price": 100, "stock": 130, "tags": ["protein"] },
+    { "id": 10, "name": "Soyabean Oil (Rupchanda)", "category": "Oil", "price": 170, "stock": 90, "tags": ["cooking"] },
+    { "id": 11, "name": "Mustard Oil", "category": "Oil", "price": 200, "stock": 80, "tags": ["traditional"] },
+    { "id": 12, "name": "Onion (Peyaj)", "category": "Vegetables", "price": 65, "stock": 300, "tags": ["essential"] },
+    { "id": 13, "name": "Potato (Alu)", "category": "Vegetables", "price": 40, "stock": 350, "tags": ["essential"] },
+    { "id": 14, "name": "Tomato", "category": "Vegetables", "price": 80, "stock": 200, "tags": ["fresh"] },
+    { "id": 15, "name": "Green Chili (Morich)", "category": "Vegetables", "price": 120, "stock": 100, "tags": ["spicy"] },
+    { "id": 16, "name": "Garlic (Roshun)", "category": "Vegetables", "price": 180, "stock": 90, "tags": ["spices"] },
+    { "id": 17, "name": "Ginger (Ada)", "category": "Vegetables", "price": 220, "stock": 85, "tags": ["spices"] },
+    { "id": 18, "name": "Cabbage (Badhakopi)", "category": "Vegetables", "price": 50, "stock": 120, "tags": ["fresh"] },
+    { "id": 19, "name": "Cauliflower (Fulkopi)", "category": "Vegetables", "price": 60, "stock": 110, "tags": ["fresh"] },
+    { "id": 20, "name": "Carrot (Gajor)", "category": "Vegetables", "price": 90, "stock": 150, "tags": ["healthy"] },
+    { "id": 21, "name": "Cucumber (Shosha)", "category": "Vegetables", "price": 70, "stock": 140, "tags": ["salad"] },
+    { "id": 22, "name": "Banana (Kola)", "category": "Fruits", "price": 10, "stock": 400, "tags": ["fresh"] },
+    { "id": 23, "name": "Mango (Aam)", "category": "Fruits", "price": 120, "stock": 250, "tags": ["seasonal"] },
+    { "id": 24, "name": "Guava (Peyara)", "category": "Fruits", "price": 80, "stock": 200, "tags": ["healthy"] },
+    { "id": 25, "name": "Apple (Seb)", "category": "Fruits", "price": 250, "stock": 100, "tags": ["imported"] },
+    { "id": 26, "name": "Orange (Komola)", "category": "Fruits", "price": 200, "stock": 120, "tags": ["citrus"] },
+    { "id": 27, "name": "Papaya (Pepe)", "category": "Fruits", "price": 60, "stock": 150, "tags": ["healthy"] },
+    { "id": 28, "name": "Pineapple (Anaros)", "category": "Fruits", "price": 100, "stock": 130, "tags": ["juicy"] },
+    { "id": 29, "name": "Watermelon (Tormuj)", "category": "Fruits", "price": 40, "stock": 170, "tags": ["summer"] },
+    { "id": 30, "name": "Beef (Gorur Mangsho)", "category": "Meat", "price": 650, "stock": 50, "tags": ["protein"] },
+    { "id": 31, "name": "Mutton (Khashir Mangsho)", "category": "Meat", "price": 850, "stock": 40, "tags": ["protein"] },
+    { "id": 32, "name": "Chicken (Broiler)", "category": "Meat", "price": 220, "stock": 90, "tags": ["protein"] },
+    { "id": 33, "name": "Deshi Chicken", "category": "Meat", "price": 500, "stock": 60, "tags": ["traditional"] },
+    { "id": 34, "name": "Ilish Machh", "category": "Fish", "price": 1200, "stock": 30, "tags": ["premium", "fish"] },
+    { "id": 35, "name": "Rui Machh", "category": "Fish", "price": 350, "stock": 70, "tags": ["fish"] },
+    { "id": 36, "name": "Katla Machh", "category": "Fish", "price": 400, "stock": 60, "tags": ["fish"] },
+    { "id": 37, "name": "Pangas Machh", "category": "Fish", "price": 200, "stock": 100, "tags": ["fish"] },
+    { "id": 38, "name": "Koi Machh", "category": "Fish", "price": 280, "stock": 80, "tags": ["fish"] },
+    { "id": 39, "name": "Milk (Dudh)", "category": "Dairy", "price": 80, "stock": 150, "tags": ["dairy"] },
+    { "id": 40, "name": "Eggs (Dim 12 pcs)", "category": "Dairy", "price": 150, "stock": 180, "tags": ["protein"] },
+    { "id": 41, "name": "Curd (Doi)", "category": "Dairy", "price": 120, "stock": 90, "tags": ["dairy"] },
+    { "id": 42, "name": "Sugar (Chini)", "category": "Essentials", "price": 90, "stock": 200, "tags": ["sweet"] },
+    { "id": 43, "name": "Salt (Laban)", "category": "Essentials", "price": 40, "stock": 300, "tags": ["essential"] },
+    { "id": 44, "name": "Tea (Cha)", "category": "Beverages", "price": 250, "stock": 100, "tags": ["drink"] },
+    { "id": 45, "name": "Coffee", "category": "Beverages", "price": 350, "stock": 80, "tags": ["drink"] },
+    { "id": 46, "name": "Soft Drink (Coca Cola 1L)", "category": "Beverages", "price": 65, "stock": 90, "tags": ["cold drink"] },
+    { "id": 47, "name": "Biscuits (Parle-G)", "category": "Snacks", "price": 50, "stock": 160, "tags": ["snack"] },
+    { "id": 48, "name": "Chanachur", "category": "Snacks", "price": 60, "stock": 140, "tags": ["snack", "spicy"] },
+    { "id": 49, "name": "Soap (Lux)", "category": "Personal Care", "price": 35, "stock": 200, "tags": ["hygiene"] },
+    { "id": 50, "name": "Detergent (Surf Excel 500g)", "category": "Cleaning", "price": 120, "stock": 100, "tags": ["cleaning"] }
+  ],
+  "customers": [
+    {
+      "id": 1,
+      "name": "Rahim Uddin",
+      "email": "rahim@example.com",
+      "phone": "01710000001",
+      "address": "House-12, Dhanmondi, Dhaka"
+    },
+    {
+      "id": 2,
+      "name": "Ayesha Akter",
+      "email": "ayesha@example.com",
+      "phone": "01820000002",
+      "address": "Kazir Dewri, Chattogram"
+    }
+  ],
+  "orders": [
+    {
+      "id": 1,
+      "customerId": 1,
+      "products": [
+        { "productId": 1, "quantity": 10 },
+        { "productId": 12, "quantity": 5 },
+        { "productId": 40, "quantity": 2 }
+      ],
+      "total": 1470,
+      "status": "Shipped"
+    },
+    {
+      "id": 2,
+      "customerId": 2,
+      "products": [
+        { "productId": 23, "quantity": 3 },
+        { "productId": 34, "quantity": 1 },
+        { "productId": 50, "quantity": 2 }
+      ],
+      "total": 1780,
+      "status": "Pending"
+    }
+  ]
+}
