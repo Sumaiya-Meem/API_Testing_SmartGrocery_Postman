@@ -1,0 +1,1346 @@
+{
+	"info": {
+		"_postman_id": "67a01208-14ec-45ea-9c74-c5887f6547a1",
+		"name": "SmartGrocery API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29046416"
+	},
+	"item": [
+		{
+			"name": "List of All Products",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Successful GET request\", () => {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response should be an array of products\", () => {\r",
+							"    pm.expect(jsonData).to.be.an(\"array\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"jsonData.forEach((product, index) => {\r",
+							"    pm.test(`Product ${index + 1} has required fields`, () => {\r",
+							"        pm.expect(product).to.have.property(\"id\");\r",
+							"        pm.expect(product).to.have.property(\"name\");\r",
+							"        pm.expect(product).to.have.property(\"category\");\r",
+							"        pm.expect(product).to.have.property(\"price\");\r",
+							"        pm.expect(product).to.have.property(\"stock\");\r",
+							"        pm.expect(product).to.have.property(\"tags\");\r",
+							"    });\r",
+							"\r",
+							"    pm.test(`Product ${index + 1} - field types are valid`, () => {\r",
+							"        pm.expect(product.id).to.be.a(\"string\");\r",
+							"        pm.expect(product.name).to.be.a(\"string\");\r",
+							"        pm.expect(product.category).to.be.a(\"string\");\r",
+							"        pm.expect(product.price).to.be.a(\"number\");\r",
+							"        pm.expect(product.stock).to.be.a(\"number\");\r",
+							"        pm.expect(product.tags).to.be.an(\"array\");\r",
+							"    });\r",
+							"\r",
+							"    pm.test(`Product ${index + 1} - name field is required`, () => {\r",
+							"        pm.expect(product.name).to.not.be.undefined;\r",
+							"        pm.expect(product.name).to.not.eql(\"\");\r",
+							"    });\r",
+							"\r",
+							"    pm.test(`Product ${index + 1} - price must be valid`, () => {\r",
+							"        pm.expect(product.price).to.be.above(0);\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"\r",
+							"const schema = {\r",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\r",
+							"    \"type\": \"array\",\r",
+							"    \"items\": {\r",
+							"        \"type\": \"object\",\r",
+							"        \"properties\": {\r",
+							"            \"id\": { \"type\": \"string\" },\r",
+							"            \"name\": { \"type\": \"string\" },\r",
+							"            \"category\": { \"type\": \"string\" },\r",
+							"            \"price\": { \"type\": \"number\" },\r",
+							"            \"stock\": { \"type\": \"number\" },\r",
+							"            \"tags\": {\r",
+							"                \"type\": \"array\",\r",
+							"                \"items\": { \"type\": \"string\" }\r",
+							"            }\r",
+							"        },\r",
+							"        \"required\": [\"id\", \"name\", \"category\", \"price\", \"stock\", \"tags\"]\r",
+							"    }\r",
+							"};\r",
+							"\r",
+							"pm.test(\"Schema is valid for all products\", () => {\r",
+							"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseURL}}/products",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a New Product",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Status code is 201\", () => {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"// should contain all product fields\r",
+							"pm.test(\"Response has required fields\", () => {\r",
+							"    pm.expect(jsonData).to.have.property(\"id\");\r",
+							"    pm.expect(jsonData).to.have.property(\"name\");\r",
+							"    pm.expect(jsonData).to.have.property(\"category\");\r",
+							"    pm.expect(jsonData).to.have.property(\"price\");\r",
+							"    pm.expect(jsonData).to.have.property(\"stock\");\r",
+							"    pm.expect(jsonData).to.have.property(\"tags\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Name field is required\", () => {\r",
+							"    pm.expect(jsonData).to.have.property(\"name\");\r",
+							"    pm.expect(jsonData.name).to.not.be.undefined;\r",
+							"    pm.expect(jsonData.name).to.not.eql(\"\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Price must be a number\", () => {\r",
+							"    pm.expect(Number(jsonData.price)).to.be.a(\"number\");\r",
+							"});\r",
+							"\r",
+							"// Check Data types \r",
+							"pm.test(\"Response field types are valid\", () => {\r",
+							"    pm.expect(jsonData.id).to.be.a(\"string\");\r",
+							"    pm.expect(jsonData.name).to.be.a(\"string\");\r",
+							"    pm.expect(jsonData.category).to.be.a(\"string\");\r",
+							"    pm.expect(jsonData.price).to.be.a(\"number\");\r",
+							"    pm.expect(jsonData.stock).to.be.a(\"number\");\r",
+							"    pm.expect(jsonData.tags).to.be.an(\"array\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Product price are valid\", () => {\r",
+							"    pm.expect(jsonData.price).to.be.above(0);\r",
+							"});\r",
+							"\r",
+							"// Confirm created product matches request body\r",
+							"const requestBody = pm.request.body ? pm.request.body.raw : \"{}\";\r",
+							"let sentData = {};\r",
+							"try { sentData = JSON.parse(requestBody); } catch(e) {}\r",
+							"\r",
+							"pm.test(\"Created product matches request data\", () => {\r",
+							"    pm.expect(jsonData.name).to.eql(sentData.name);\r",
+							"    pm.expect(jsonData.category).to.eql(sentData.category);\r",
+							"    pm.expect(jsonData.price).to.eql(sentData.price);\r",
+							"    pm.expect(jsonData.stock).to.eql(sentData.stock);\r",
+							"});\r",
+							"\r",
+							"//json schema validation\r",
+							"var schema={\r",
+							"  \"$schema\": \"http://json-schema.org/draft-04/schema#\",\r",
+							"  \"type\": \"object\",\r",
+							"  \"properties\": {\r",
+							"    \"id\": {\r",
+							"      \"type\": \"string\"\r",
+							"    },\r",
+							"    \"name\": {\r",
+							"      \"type\": \"string\"\r",
+							"    },\r",
+							"    \"category\": {\r",
+							"      \"type\": \"string\"\r",
+							"    },\r",
+							"    \"price\": {\r",
+							"      \"type\": \"integer\"\r",
+							"    },\r",
+							"    \"stock\": {\r",
+							"      \"type\": \"integer\"\r",
+							"    },\r",
+							"    \"tags\": {\r",
+							"      \"type\": \"array\",\r",
+							"      \"items\": [\r",
+							"        {\r",
+							"          \"type\": \"string\"\r",
+							"        },\r",
+							"        {\r",
+							"          \"type\": \"string\"\r",
+							"        }\r",
+							"      ]\r",
+							"    }\r",
+							"  },\r",
+							"  \"required\": [\r",
+							"    \"id\",\r",
+							"    \"name\",\r",
+							"    \"category\",\r",
+							"    \"price\",\r",
+							"    \"stock\",\r",
+							"    \"tags\"\r",
+							"  ]\r",
+							"}\r",
+							"\r",
+							"pm.test(\"Schema is valid\",()=>{\r",
+							"    pm.expect(tv4.validate(jsonData,schema)).to.be.true;\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\"id\":\"52\",\r\n\"name\":\"Fanta(500ml)\",\r\n\"category\": \"Beverages\", \r\n\"price\": 80, \r\n\"stock\": 90, \r\n\"tags\": [\"cold drink\"] \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}/products",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Filter Products List",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Successful GET request\", () => {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Content-Type header is present\", () => {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type is application/json\", () => {\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.eql(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 400ms\", () => {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Response is an array\", () => {\r",
+							"    pm.expect(jsonData).to.be.an(\"array\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response contains maximum 3 products\", () => {\r",
+							"    pm.expect(jsonData.length).to.be.at.most(3);\r",
+							"});\r",
+							"\r",
+							"if (jsonData.length === 0) {\r",
+							"    pm.test(\"Custom message: No products found\", () => {\r",
+							"        console.log(\"No products found for the given category\");\r",
+							"    });\r",
+							"}\r",
+							"jsonData.forEach((product, index) => {\r",
+							"    pm.test(`Product ${index + 1} belongs to category Vegetables`, () => {\r",
+							"        pm.expect(product.category).to.eql(\"Vegetables\");\r",
+							"    });\r",
+							"\r",
+							"    pm.test(`Product ${index + 1} has required fields`, () => {\r",
+							"        pm.expect(product).to.have.property(\"id\");\r",
+							"        pm.expect(product).to.have.property(\"name\");\r",
+							"        pm.expect(product).to.have.property(\"category\");\r",
+							"        pm.expect(product).to.have.property(\"price\");\r",
+							"        pm.expect(product).to.have.property(\"stock\");\r",
+							"        pm.expect(product).to.have.property(\"tags\");\r",
+							"    });\r",
+							"\r",
+							"\r",
+							"    pm.test(`Product ${index + 1} field types are valid`, () => {\r",
+							"        pm.expect(product.id).to.be.a(\"string\");       \r",
+							"        pm.expect(product.name).to.be.a(\"string\");\r",
+							"        pm.expect(product.category).to.be.a(\"string\");\r",
+							"        pm.expect(product.price).to.be.a(\"number\");\r",
+							"        pm.expect(product.stock).to.be.a(\"number\");\r",
+							"        pm.expect(product.tags).to.be.an(\"array\");\r",
+							"    });\r",
+							"\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseURL}}/products?category=Vegetables&_limit=3",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"products"
+					],
+					"query": [
+						{
+							"key": "category",
+							"value": "Vegetables"
+						},
+						{
+							"key": "_limit",
+							"value": "3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update a Product",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"// Check required fields\r",
+							"pm.test(\"Response has all required fields\", () => {\r",
+							"    pm.expect(jsonData).to.have.property(\"id\");\r",
+							"    pm.expect(jsonData).to.have.property(\"name\");\r",
+							"    pm.expect(jsonData).to.have.property(\"category\");\r",
+							"    pm.expect(jsonData).to.have.property(\"price\");\r",
+							"    pm.expect(jsonData).to.have.property(\"stock\");\r",
+							"    pm.expect(jsonData).to.have.property(\"tags\");\r",
+							"});\r",
+							"\r",
+							"// Validate data types\r",
+							"pm.test(\"Field types are valid\", () => {\r",
+							"    pm.expect(jsonData.id).to.be.a(\"string\");\r",
+							"    pm.expect(jsonData.name).to.be.a(\"string\");\r",
+							"    pm.expect(jsonData.category).to.be.a(\"string\");\r",
+							"    pm.expect(jsonData.price).to.be.a(\"number\");\r",
+							"    pm.expect(jsonData.stock).to.be.a(\"number\");\r",
+							"    pm.expect(jsonData.tags).to.be.an(\"array\");\r",
+							"});\r",
+							"\r",
+							"// Confirm updated data matches request body\r",
+							"const requestBody = pm.request.body ? pm.request.body.raw : \"{}\";\r",
+							"let sentData = {};\r",
+							"try { sentData = JSON.parse(requestBody); } catch(e) {}\r",
+							"\r",
+							"pm.test(\"Updated product matches request data\", () => {\r",
+							"    pm.expect(jsonData.name).to.eql(sentData.name);\r",
+							"    pm.expect(jsonData.category).to.eql(sentData.category);\r",
+							"    pm.expect(jsonData.price).to.eql(sentData.price);\r",
+							"    pm.expect(jsonData.stock).to.eql(sentData.stock);\r",
+							"    pm.expect(jsonData.tags).to.eql(sentData.tags);\r",
+							"});\r",
+							"\r",
+							"// Validate schema\r",
+							"var schema = {\r",
+							"  \"$schema\": \"http://json-schema.org/draft-04/schema#\",\r",
+							"  \"type\": \"object\",\r",
+							"  \"properties\": {\r",
+							"    \"id\": { \"type\": \"string\" },\r",
+							"    \"name\": { \"type\": \"string\" },\r",
+							"    \"category\": { \"type\": \"string\" },\r",
+							"    \"price\": { \"type\": \"number\" },\r",
+							"    \"stock\": { \"type\": \"number\" },\r",
+							"    \"tags\": { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\r",
+							"  },\r",
+							"  \"required\": [\"id\", \"name\", \"category\", \"price\", \"stock\", \"tags\"]\r",
+							"};\r",
+							"\r",
+							"pm.test(\"Schema is valid\", () => {\r",
+							"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"name\": \"Chal (Miniket)\", \r\n\"category\": \"Grains\", \r\n\"price\": 70, \r\n\"stock\": 220, \r\n\"tags\": [\"essential\",\"bulk\",\"premium\"] \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}/products/:id\n",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"products",
+						":id\n"
+					],
+					"variable": [
+						{
+							"key": "id\n",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a Product",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Status code is 200, 204, or 404\", () => {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 204, 404]);\r",
+							"});\r",
+							"\r",
+							"let jsonData = {};\r",
+							"try { jsonData = pm.response.json(); } catch(e) {}\r",
+							"\r",
+							"// Only check response body if 200\r",
+							"if (pm.response.code === 200) {\r",
+							"    pm.test(\"Delete response has expected fields\", () => {\r",
+							"        pm.expect(jsonData).to.be.an(\"object\");\r",
+							"        pm.expect(jsonData).to.have.property(\"message\");\r",
+							"        pm.expect(jsonData.message.toLowerCase()).to.include(\"deleted\");\r",
+							"    });\r",
+							"}\r",
+							"\r",
+							"// If 204, assert no content\r",
+							"if (pm.response.code === 204) {\r",
+							"    pm.test(\"Response body is empty\", () => {\r",
+							"        pm.expect(pm.response.text()).to.eql(\"\");\r",
+							"    });\r",
+							"}\r",
+							"\r",
+							"// If 404, assert error message\r",
+							"if (pm.response.code === 404) {\r",
+							"    pm.test(\"404 response should be empty or contain error\", () => {\r",
+							"        pm.expect(jsonData).to.be.an(\"object\");\r",
+							"        if (Object.keys(jsonData).length > 0) {\r",
+							"            pm.expect(jsonData).to.have.property(\"error\");\r",
+							"            pm.expect(jsonData.error.toLowerCase()).to.include(\"not found\");\r",
+							"        }\r",
+							"    });\r",
+							"}\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}/products/:id",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"products",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "51"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Single Product",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// ✅ Check status code\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"// ✅ Parse response JSON\r",
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"// ✅ Check required fields\r",
+							"pm.test(\"Response has required fields\", () => {\r",
+							"    pm.expect(jsonData).to.have.property(\"id\");\r",
+							"    pm.expect(jsonData).to.have.property(\"name\");\r",
+							"    pm.expect(jsonData).to.have.property(\"category\");\r",
+							"    pm.expect(jsonData).to.have.property(\"price\");\r",
+							"    pm.expect(jsonData).to.have.property(\"stock\");\r",
+							"});\r",
+							"\r",
+							"// ✅ Check data types\r",
+							"pm.test(\"Data types are correct\", () => {\r",
+							"    pm.expect(jsonData.id).to.be.a(\"string\");       // since JSON server stores ID as string\r",
+							"    pm.expect(jsonData.name).to.be.a(\"string\");\r",
+							"    pm.expect(jsonData.category).to.be.a(\"string\");\r",
+							"    pm.expect(jsonData.price).to.be.a(\"number\");\r",
+							"    pm.expect(jsonData.stock).to.be.a(\"number\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{BaseURL}}/products/50",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"products",
+						"50"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List of All Orders",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"// Response should be an array\r",
+							"pm.test(\"Response is an array\", () => {\r",
+							"    pm.expect(jsonData).to.be.an(\"array\");\r",
+							"});\r",
+							"\r",
+							"// Each order must have required fields\r",
+							"pm.test(\"Each order has required fields\", () => {\r",
+							"    jsonData.forEach(order => {\r",
+							"        pm.expect(order).to.have.property(\"id\");\r",
+							"        pm.expect(order).to.have.property(\"customerId\");\r",
+							"        pm.expect(order).to.have.property(\"products\");\r",
+							"        pm.expect(order).to.have.property(\"total\");\r",
+							"        pm.expect(order).to.have.property(\"status\");\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"// Validate field data types\r",
+							"pm.test(\"Field data types are valid\", () => {\r",
+							"    jsonData.forEach(order => {\r",
+							"        pm.expect(order.id).to.be.a(\"string\");\r",
+							"        pm.expect(order.customerId).to.be.a(\"number\");\r",
+							"        pm.expect(order.products).to.be.an(\"array\");\r",
+							"        pm.expect(order.total).to.be.a(\"number\");\r",
+							"        pm.expect(order.status).to.be.a(\"string\");\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"// Check products inside each order\r",
+							"pm.test(\"Each product in order has productId and quantity\", () => {\r",
+							"    jsonData.forEach(order => {\r",
+							"        order.products.forEach(prod => {\r",
+							"            pm.expect(prod).to.have.property(\"productId\");\r",
+							"            pm.expect(prod).to.have.property(\"quantity\");\r",
+							"            pm.expect(prod.productId).to.be.a(\"number\");\r",
+							"            pm.expect(prod.quantity).to.be.a(\"number\");\r",
+							"        });\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							"// Status should be one of predefined values\r",
+							"pm.test(\"Order status is valid\", () => {\r",
+							"    const validStatuses = [\"Pending\", \"Shipped\", \"Delivered\", \"Cancelled\"];\r",
+							"    jsonData.forEach(order => {\r",
+							"        pm.expect(validStatuses).to.include(order.status);\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"var schema={\r",
+							"  \"$schema\": \"http://json-schema.org/draft-04/schema#\",\r",
+							"  \"type\": \"object\",\r",
+							"  \"properties\": {\r",
+							"    \"id\": {\r",
+							"      \"type\": \"string\"\r",
+							"    },\r",
+							"    \"customerId\": {\r",
+							"      \"type\": \"integer\"\r",
+							"    },\r",
+							"    \"products\": {\r",
+							"      \"type\": \"array\",\r",
+							"      \"items\": [\r",
+							"        {\r",
+							"          \"type\": \"object\",\r",
+							"          \"properties\": {\r",
+							"            \"productId\": {\r",
+							"              \"type\": \"integer\"\r",
+							"            },\r",
+							"            \"quantity\": {\r",
+							"              \"type\": \"integer\"\r",
+							"            }\r",
+							"          },\r",
+							"          \"required\": [\r",
+							"            \"productId\",\r",
+							"            \"quantity\"\r",
+							"          ]\r",
+							"        },\r",
+							"        {\r",
+							"          \"type\": \"object\",\r",
+							"          \"properties\": {\r",
+							"            \"productId\": {\r",
+							"              \"type\": \"integer\"\r",
+							"            },\r",
+							"            \"quantity\": {\r",
+							"              \"type\": \"integer\"\r",
+							"            }\r",
+							"          },\r",
+							"          \"required\": [\r",
+							"            \"productId\",\r",
+							"            \"quantity\"\r",
+							"          ]\r",
+							"        },\r",
+							"        {\r",
+							"          \"type\": \"object\",\r",
+							"          \"properties\": {\r",
+							"            \"productId\": {\r",
+							"              \"type\": \"integer\"\r",
+							"            },\r",
+							"            \"quantity\": {\r",
+							"              \"type\": \"integer\"\r",
+							"            }\r",
+							"          },\r",
+							"          \"required\": [\r",
+							"            \"productId\",\r",
+							"            \"quantity\"\r",
+							"          ]\r",
+							"        }\r",
+							"      ]\r",
+							"    },\r",
+							"    \"total\": {\r",
+							"      \"type\": \"integer\"\r",
+							"    },\r",
+							"    \"status\": {\r",
+							"      \"type\": \"string\"\r",
+							"    }\r",
+							"  },\r",
+							"  \"required\": [\r",
+							"    \"id\",\r",
+							"    \"customerId\",\r",
+							"    \"products\",\r",
+							"    \"total\",\r",
+							"    \"status\"\r",
+							"  ]\r",
+							"}\r",
+							"\r",
+							"pm.test(\"All orders follow schema\", () => {\r",
+							"    pm.expect(tv4.validate(jsonData, { type: \"array\", items: schema })).to.be.true;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{BaseURL}}/orders",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List of All Customers",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type is application/json\", () => {\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"jsonData = pm.response.json();\r",
+							"\r",
+							"// Support both single object and array responses\r",
+							"const customers = Array.isArray(jsonData) ? jsonData : [jsonData];\r",
+							"\r",
+							"pm.test(\"Response is an array of customers\", () => {\r",
+							"    pm.expect(customers).to.be.an(\"array\");\r",
+							"});\r",
+							"\r",
+							"const customerSchema = {\r",
+							"  \"$schema\": \"http://json-schema.org/draft-04/schema#\",\r",
+							"  \"type\": \"object\",\r",
+							"  \"properties\": {\r",
+							"    \"id\": {\r",
+							"      \"type\": \"string\"\r",
+							"    },\r",
+							"    \"name\": {\r",
+							"      \"type\": \"string\"\r",
+							"    },\r",
+							"    \"email\": {\r",
+							"      \"type\": \"string\"\r",
+							"    },\r",
+							"    \"phone\": {\r",
+							"      \"type\": \"string\"\r",
+							"    },\r",
+							"    \"address\": {\r",
+							"      \"type\": \"string\"\r",
+							"    }\r",
+							"  },\r",
+							"  \"required\": [\r",
+							"    \"id\",\r",
+							"    \"name\",\r",
+							"    \"email\",\r",
+							"    \"phone\",\r",
+							"    \"address\"\r",
+							"  ]\r",
+							"}\r",
+							"\r",
+							"customers.forEach((customer, i) => {\r",
+							"    const idx = i + 1;\r",
+							"    pm.test(`Customer ${idx}: has all required fields`, () => {\r",
+							"        pm.expect(customer).to.have.property(\"id\");\r",
+							"        pm.expect(customer).to.have.property(\"name\");\r",
+							"        pm.expect(customer).to.have.property(\"email\");\r",
+							"        pm.expect(customer).to.have.property(\"phone\");\r",
+							"        pm.expect(customer).to.have.property(\"address\");\r",
+							"    });\r",
+							"\r",
+							"    pm.test(`Customer ${idx}: field types are correct`, () => {\r",
+							"        pm.expect(customer.id).to.be.a(\"string\");\r",
+							"        pm.expect(customer.name).to.be.a(\"string\");\r",
+							"        pm.expect(customer.email).to.be.a(\"string\");\r",
+							"        pm.expect(customer.phone).to.be.a(\"string\");\r",
+							"        pm.expect(customer.address).to.be.a(\"string\");\r",
+							"    });\r",
+							"\r",
+							"    pm.test(`Customer ${idx}: email format is valid`, () => {\r",
+							"        pm.expect(customer.email).to.match(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/);\r",
+							"    });\r",
+							"\r",
+							"    pm.test(`Customer ${idx}: matches JSON schema`, () => {\r",
+							"        pm.expect(tv4.validate(customer, customerSchema)).to.be.true;\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"// Duplicate ID check\r",
+							"pm.test(\"No duplicate customer IDs\", () => {\r",
+							"    const ids = customers.map(c => c.id);\r",
+							"    const uniqueIds = new Set(ids);\r",
+							"    pm.expect(uniqueIds.size).to.eql(ids.length);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{BaseURL}}/customers",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"customers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Single Order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 200 or 404\", () => {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 404]);\r",
+							"});\r",
+							"\r",
+							"if (pm.response.code === 200) {\r",
+							"    const jsonData = pm.response.json();\r",
+							"    pm.test(\"Order has required fields\", () => {\r",
+							"        pm.expect(jsonData).to.have.property(\"id\");\r",
+							"        pm.expect(jsonData).to.have.property(\"customerId\");\r",
+							"        pm.expect(jsonData).to.have.property(\"products\");\r",
+							"        pm.expect(jsonData).to.have.property(\"total\");\r",
+							"        pm.expect(jsonData).to.have.property(\"status\");\r",
+							"    });\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{BaseURL}}/orders/1",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"orders",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create an Order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 201\", () => {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"pm.test(\"Created order has all fields\", () => {\r",
+							"    pm.expect(jsonData).to.have.property(\"id\");\r",
+							"    pm.expect(jsonData).to.have.property(\"customerId\");\r",
+							"    pm.expect(jsonData).to.have.property(\"products\");\r",
+							"    pm.expect(jsonData).to.have.property(\"total\");\r",
+							"    pm.expect(jsonData).to.have.property(\"status\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":\"4\",\r\n  \"customerId\": 3,\r\n  \"products\": [\r\n    { \"productId\": 40, \"quantity\": 3 },\r\n    { \"productId\": 32, \"quantity\": 1 }\r\n  ],\r\n  \"total\": 950,\r\n  \"status\": \"Pending\"\r\n}\r\n"
+				},
+				"url": {
+					"raw": "{{BaseURL}}/orders",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update an Order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 200 or 404\", () => {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 404]);\r",
+							"});\r",
+							"\r",
+							"if (pm.response.code === 200) {\r",
+							"    const jsonData = pm.response.json();\r",
+							"\r",
+							"    // Validate required fields\r",
+							"    pm.test(\"Updated order has all required fields\", () => {\r",
+							"        pm.expect(jsonData).to.have.property(\"id\");\r",
+							"        pm.expect(jsonData).to.have.property(\"customerId\");\r",
+							"        pm.expect(jsonData).to.have.property(\"products\");\r",
+							"        pm.expect(jsonData).to.have.property(\"total\");\r",
+							"        pm.expect(jsonData).to.have.property(\"status\");\r",
+							"    });\r",
+							"\r",
+							"    // Validate data types\r",
+							"    pm.test(\"Updated order field types are correct\", () => {\r",
+							"        pm.expect(jsonData.id).to.be.a(\"string\");\r",
+							"        pm.expect(jsonData.customerId).to.be.a(\"number\");\r",
+							"        pm.expect(jsonData.products).to.be.an(\"array\");\r",
+							"        pm.expect(jsonData.total).to.be.a(\"number\");\r",
+							"        pm.expect(jsonData.status).to.be.a(\"string\");\r",
+							"    });\r",
+							"\r",
+							"    // Validate products structure\r",
+							"    if (jsonData.products.length > 0) {\r",
+							"        pm.test(\"Products inside order have required fields\", () => {\r",
+							"            jsonData.products.forEach(p => {\r",
+							"                pm.expect(p).to.have.property(\"productId\");\r",
+							"                pm.expect(p).to.have.property(\"quantity\");\r",
+							"                pm.expect(p.productId).to.be.a(\"number\");\r",
+							"                pm.expect(p.quantity).to.be.a(\"number\");\r",
+							"            });\r",
+							"        });\r",
+							"    }\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"id\": \"2\",\r\n\"customerId\": 3,\r\n\"products\": [\r\n{\r\n\"productId\": 50,\r\n\"quantity\": 2\r\n},\r\n{\r\n\"productId\": 24,\r\n\"quantity\": 1\r\n}\r\n],\r\n\"total\": 950,\r\n\"status\": \"Shipped\"\r\n}"
+				},
+				"url": {
+					"raw": "{{BaseURL}}/orders/:id",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"orders",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete an Order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 200, 204, or 404\", () => {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 204, 404]);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{BaseURL}}/orders/:id",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"orders",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "2b87"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a new Customer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201 or 400\", () => {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([201, 400]);\r",
+							"});\r",
+							"\r",
+							"if (pm.response.code === 201) {\r",
+							"    const jsonData = pm.response.json();\r",
+							"\r",
+							"    pm.test(\"Created customer has all required fields\", () => {\r",
+							"        pm.expect(jsonData).to.have.property(\"id\");\r",
+							"        pm.expect(jsonData).to.have.property(\"name\");\r",
+							"        pm.expect(jsonData).to.have.property(\"email\");\r",
+							"        pm.expect(jsonData).to.have.property(\"phone\");\r",
+							"        pm.expect(jsonData).to.have.property(\"address\");\r",
+							"    });\r",
+							"\r",
+							"    pm.test(\"Created customer field types are correct\", () => {\r",
+							"        pm.expect(jsonData.id).to.be.a(\"string\");\r",
+							"        pm.expect(jsonData.name).to.be.a(\"string\");\r",
+							"        pm.expect(jsonData.email).to.be.a(\"string\");\r",
+							"        pm.expect(jsonData.phone).to.be.a(\"string\");\r",
+							"        pm.expect(jsonData.address).to.be.a(\"string\");\r",
+							"    });\r",
+							"\r",
+							"    pm.test(`Customer : email format is valid`, () => {\r",
+							"        pm.expect(jsonData.email).to.match(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/);\r",
+							"    });\r",
+							"\r",
+							"    const customerSchema = {\r",
+							"  \"$schema\": \"http://json-schema.org/draft-04/schema#\",\r",
+							"  \"type\": \"object\",\r",
+							"  \"properties\": {\r",
+							"    \"id\": {\r",
+							"      \"type\": \"string\"\r",
+							"    },\r",
+							"    \"name\": {\r",
+							"      \"type\": \"string\"\r",
+							"    },\r",
+							"    \"email\": {\r",
+							"      \"type\": \"string\"\r",
+							"    },\r",
+							"    \"phone\": {\r",
+							"      \"type\": \"string\"\r",
+							"    },\r",
+							"    \"address\": {\r",
+							"      \"type\": \"string\"\r",
+							"    }\r",
+							"  },\r",
+							"  \"required\": [\r",
+							"    \"id\",\r",
+							"    \"name\",\r",
+							"    \"email\",\r",
+							"    \"phone\",\r",
+							"    \"address\"\r",
+							"  ]\r",
+							"}\r",
+							"    pm.test(\"Created customer matches schema\", () => {\r",
+							"        pm.expect(tv4.validate(jsonData, customerSchema)).to.be.true;\r",
+							"    });\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": \"4\",\r\n  \"name\": \"Meem\",\r\n  \"email\": \"meem@gmail.com\",\r\n  \"phone\": \"01730000003\",\r\n  \"address\": \"Farmgate, Dhaka\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}/customers",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"customers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update an existing customer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 200 or 404\", () => {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 404]);\r",
+							"});\r",
+							"\r",
+							"if (pm.response.code === 200) {\r",
+							"    const jsonData = pm.response.json();\r",
+							"\r",
+							"    pm.test(\"Updated customer has all required fields\", () => {\r",
+							"        [\"id\",\"name\",\"email\",\"phone\",\"address\"].forEach(field => {\r",
+							"            pm.expect(jsonData).to.have.property(field);\r",
+							"        });\r",
+							"    });\r",
+							"\r",
+							"    pm.test(\"Updated customer field types are correct\", () => {\r",
+							"        pm.expect(jsonData.id).to.be.a(\"string\");\r",
+							"        pm.expect(jsonData.name).to.be.a(\"string\");\r",
+							"        pm.expect(jsonData.email).to.be.a(\"string\");\r",
+							"        pm.expect(jsonData.phone).to.be.a(\"string\");\r",
+							"        pm.expect(jsonData.address).to.be.a(\"string\");\r",
+							"    });\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"id\": \"3\",\r\n\"name\": \"Karim Ali\",\r\n\"email\": \"karim@example.com\",\r\n\"phone\": \"0193431343\",\r\n\"address\": \"Farmgate,Dhaka\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}/customers/3",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"customers",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Remove a customer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 200 or 404\", () => {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 404]);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}/customers/4",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"customers",
+						"4"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BaseURL",
+			"value": ""
+		},
+		{
+			"value": ""
+		}
+	]
+}
